@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdio.h>
 
+#include "artifact_tree.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -18,13 +19,15 @@ int main(int argc, char *argv[]) {
 
 	//You can see the class output functionality by uncommenting
 
-	/*artifact *a1 = new artifact("testArtifact1");
+	artifact *a1 = new artifact("testArtifact1");
 	artifact *a2 = new artifact("testArtifact2");
 	artifact *a3 = new artifact("testArtifact3");
-	std::vector<artifact *> artVec = { a1,a2,a3 };
+
+	artifactContainer *aC1 = new artifactContainer("artifactContainer1", { a1,a2 });
+	artifactContainer *aC2 = new artifactContainer("artifactContainer2", { a3 });
 
 
-	folder *f1 = new folder("folder1", {}, artVec);
+	folder *f1 = new folder("folder1", {}, { aC1, aC2 });
 	folder *f2A = new folder("folder2A");
 	folder *f2BA = new folder("folder2BA");
 	folder *f2BC = new folder("folder2BC");
@@ -35,7 +38,7 @@ int main(int argc, char *argv[]) {
 	folder *f3 = new folder("folder3", {f3A});
 	folder *root = new folder("rootFolder", { f1,f2,f3 });
 	std::cout << *root << std::endl;
-	root->dispayTree();*/
+	root->dispayTree();
 	
 	
 	return 0;

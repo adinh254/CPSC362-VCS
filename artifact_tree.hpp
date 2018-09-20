@@ -6,9 +6,6 @@
 struct artifact {
 public:
 	artifact(std::string artID = "", FILE *file = nullptr) : artID_(artID), file_(file) {}
-	void setArtID() {
-
-	}
 
 
 	friend std::ostream& operator<<(std::ostream& os, const artifact& a) {
@@ -19,24 +16,33 @@ public:
 	FILE *file_;
 };
 
+struct artifactContainer {
+public:
+	artifactContainer(std::string name = "", std::vector<artifact *> artifacts = std::vector<artifact *>()) :
+		name_(name), artifacts_(artifacts) {}
+
+	friend std::ostream& operator<<(std::ostream& os, const artifactContainer& a) {
+		return os << a.name_;
+	}
+
+	std::string name_;
+	std::vector<artifact *> artifacts_;
+};
+
 struct folder {
 public:
-	folder(std::string name = "", std::vector<folder *> children = std::vector<folder *>(), std::vector<artifact *> artifacts = std::vector<artifact *>()) :
-		name_(name), children_(children), artifacts_(artifacts) {}
+	folder(std::string name = "", std::vector<folder *> children = std::vector<folder *>(), std::vector<artifactContainer *> artifactContainers = std::vector<artifactContainer *>()) :
+		name_(name), children_(children), artifactContainers_(artifactContainers) {}
 
 
 	void dispayTree(int layer = 1) {
 		folder current = *this;
-		std::cout << current.name_ << " [artifacts: ";
-		if (current.artifacts_.empty()) {
-			std::cout << "NONE";
+		std::cout << current.name_ << " {files:[";
+		for (auto it = current.artifactContainers_.begin(); it != current.artifactContainers_.end(); ++it) {
+			std::cout << **it << ", ";
 		}
-		else {
-			for (auto it = current.artifacts_.begin(); it != current.artifacts_.end(); ++it) {
-				std::cout << **it << ", ";
-			}
-		}
-		std::cout << "]\n";
+
+		std::cout << "]}\n";
 		for (auto it = current.children_.begin(); it != current.children_.end(); ++it) {
 			if (layer > 1) {
 				std::cout << std::setfill(' ') << std::setw((layer - 1) * 4) << std::left << "|";
@@ -48,14 +54,14 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const folder& f) {
-		return os << "{\n   name: " << f.name_ << "\n   artifacts: " <<
-			f.artifacts_.size() << "\n   children: " << f.children_.size() << "\n}";
+		return os << "{\n   name: " << f.name_ << "\n   files: " <<
+			f.artifactContainers_.size() << "\n   children: " << f.artifactContainers_.size() << "\n}";
 
 	}
 
 	std::string name_;
 	std::vector<folder *> children_;
-	std::vector<artifact *> artifacts_;
+	std::vector<artifactContainer *> artifactContainers_;
 };
 
 #endif // file_tree_h
