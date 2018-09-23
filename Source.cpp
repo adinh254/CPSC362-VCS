@@ -115,6 +115,7 @@ void createRepo( const::std::string& root, const std::string& dst )
 }
 
 // Menu to input root path and destination path.
+// Test Folders need to be in same directory as source.
 int main(int argc, char* argv[]) 
 {
 	std::string rootFolderName;
