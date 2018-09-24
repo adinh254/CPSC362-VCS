@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
-#include<array>
+#include <array>
 #include <regex>
 
 namespace fs = std::filesystem;
