@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
-#include <array>
+#include<array>
 #include <regex>
 
 namespace fs = std::filesystem;
@@ -51,7 +51,7 @@ std::string getArtifactID( const fs::path& path, std::fstream& myFile )
 
 	// https://en.cppreference.com/w/cpp/filesystem/path/parent_path
 	// https://en.cppreference.com/w/cpp/filesystem/path/extension
-	artID = path.parent_path().string() + "\\" + std::to_string( sum ) + "-L" + std::to_string( fileSize ) + path.extension().string();
+	artID = path.parent_path().string() + "/" + std::to_string( sum ) + "-L" + std::to_string( fileSize ) + path.extension().string();
 
 	// Close file to enable renaming.
 	myFile.close();
@@ -76,7 +76,7 @@ void createRepo( const::std::string& root, const std::string& dst )
 {
 	// New repo directory
 	fs::path rootLast = root;
-	fs::path repo = dst + "\\";
+	fs::path repo = dst + "/";
 	repo += rootLast.filename();
 	fs::create_directories( repo ); 
 	
@@ -88,7 +88,7 @@ void createRepo( const::std::string& root, const std::string& dst )
 
 		// Reassign destination path to current project tree path.
 		// https://en.cppreference.com/w/cpp/filesystem/relative
-		fs::path dstContent = repo.string() + "\\";
+		fs::path dstContent = repo.string() + "/";
 		dstContent += fs::relative( iter->path(), root );
 
 		fs::create_directory( dstContent, ec );
@@ -125,8 +125,8 @@ int main(int argc, char* argv[])
 	std::cout << "Enter your destination repo folder name: ";
 	std::cin >> destinationFolderName;
 
-	std::string rootPath = fs::current_path().string() + "\\" + rootFolderName;
-	std::string destinationPath = fs::current_path().string() + "\\" + destinationFolderName;
+	std::string rootPath = fs::current_path().string() + "/" + rootFolderName;
+	std::string destinationPath = fs::current_path().string() + "/" + destinationFolderName;
 	createRepo( rootPath, destinationPath );
 
 	return 0;
