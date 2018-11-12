@@ -13,5 +13,9 @@ void createManifest(const fs::path& manifest_path);
 void writeToManifest(const fs::path& manifest_path, const fs::path& file_path);
 std::string getTimeStamp();
 
+bool isLabelInManifest(const std::string &label);
+void writeLabel(const std::string &dst, const std::string &label);
+void addLabel(const std::string &label, const std::string &dst);
+
 #endif // !MANIFEST_H
 

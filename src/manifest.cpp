@@ -12,6 +12,7 @@ fs::path getManifestPath( const fs::path& repo ) {
 
 	return manifest_path;
 }
+
 void createManifest(const fs::path& manifest_path) {
 	std::ofstream out_file;
 	out_file.open( manifest_path );
@@ -39,4 +40,43 @@ std::string getTimeStamp()
 	errno_t err = localtime_s( &buf, &start_time );
 	std::strftime( timedisplay, sizeof( timedisplay ), "%H:%M:%S %B %d, %Y", &buf );
 	return timedisplay;
+}
+
+bool isLabelInManifest(const std::string &label) {
+	std::ifstream manifest("manifest.txt", std::ios::app);
+	std::string line;
+	while (std::getline(manifest, line)) {
+		if (line == "Label: " + label) {
+			manifest.close();
+			return true;
+		}
+	}
+	manifest.close();
+	return false;
+}
+
+void writeLabel(const std::string &dst, const std::string &label) {
+	std::ofstream temp("temp.txt");
+	std::ifstream manifest(dst);
+
+	temp << "Label: " + label + '\n';
+	temp << manifest.rdbuf();
+
+	manifest.close();
+	temp.close();
+
+	fs::remove(dst);
+	fs::rename("temp.txt", dst);
+}
+
+void addLabel(const std::string &label, const std::string &dst) {
+	fs::path potential_manifest = dst;
+	if (fs::exists(potential_manifest)) {
+		writeLabel(potential_manifest.string(), label);
+	}
+	else {
+		if (isLabelInManifest(dst)) {
+			writeLabel("manifest.txt", label);
+		}
+	}
 }

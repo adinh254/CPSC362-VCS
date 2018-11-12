@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 		createRepo(argv[2], argv[3]);
 	}
 	else if (cmd == "label") {
-		std::cout << "Create label: " << argv[2] << std::endl;
+		addLabel(argv[2], argv[3]);
 	}
 	else if (cmd == "check-in") {
 		std::cout << "Check in" << std::endl;
