@@ -37,17 +37,16 @@ std::string getArtifactID(const fs::path& path, std::fstream& my_file) {
 	// https://en.cppreference.com/w/cpp/filesystem/path/extension
 	art_id = path.parent_path().string() + "/" + std::to_string(sum) + "-L" + std::to_string(file_size) + path.extension().string();
 
-	// Close file to enable renaming.
-	my_file.close();
-
 	return art_id;
 }
 
-void renameArtifact(const fs::path& path) {
-	std::fstream my_file;
-	my_file.open(path);
-
-	if (std::rename(path.string().c_str(), getArtifactID(path, my_file).c_str())) {
-		std::perror("Error Renaming");
-	}
-}
+//void renameArtifact(const fs::path& path) {
+//	std::fstream my_file;
+//	my_file.open(path);
+//	std::string art_id = getArtifactID( path, my_file );
+//	my_file.close();
+//
+//	if (std::rename(path.string().c_str(), art_id.c_str())) {
+//		std::perror("Error Renaming");
+//	}
+//}

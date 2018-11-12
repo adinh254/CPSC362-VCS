@@ -44,8 +44,12 @@ void createRepo(const::std::string& root, const std::string& dst) {
 
 			// Pointer to first file of current repo path.
 			fs::directory_iterator firstEntry(dst_content);
-			renameArtifact(firstEntry->path());
-			writeToManifest(manifest_path, firstEntry->path() );
+			std::fstream my_file;
+			my_file.open( firstEntry->path() );
+			std::string art_id = getArtifactID( firstEntry->path(), my_file );
+			my_file.close();
+			fs::rename(firstEntry->path(), art_id);
+			writeToManifest(manifest_path, art_id );
 		}
 	}
 }
