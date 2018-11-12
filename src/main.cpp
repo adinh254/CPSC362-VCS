@@ -6,16 +6,26 @@
 #include "repo.h"
 
 int main(int argc, char *argv[]) {
-	if (argc < 4) {
-		std::cout << "usage: " << argv[0] << " COMMAND SOURCE TARGET" << std::endl;
-		return -1;
+	if (argc < 1) {
+		std::cout << "You must specified a command." << std::endl;
 	}
 
 	std::string cmd = argv[1];
-	std::string arg_2 = argv[2]; // path to project folder
-	std::string arg_3 = argv[3]; // path to empty repo folder
+
 	if (cmd == "create") {
-		createRepo(arg_2, arg_3);
+		createRepo(argv[2], argv[3]);
+	}
+	else if (cmd == "label") {
+		std::cout << "Create label: " << argv[2] << std::endl;
+	}
+	else if (cmd == "check-in") {
+		std::cout << "Check in" << std::endl;
+	}
+	else if (cmd == "check-out") {
+		std::cout << "Check out" << std::endl;
+	}
+	else {
+		std::cout << "Command not found." << std::endl;
 	}
 
 	return 0;

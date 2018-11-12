@@ -6,4 +6,6 @@
 // Copies original project tree and creates a new repo at the destination with the entire project tree inside.
 void createRepo(const::std::string& root, const std::string& dst);
 
+// Copies old files to the current project
+
 #endif 
