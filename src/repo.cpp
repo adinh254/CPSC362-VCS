@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 // Create new repo directory.
 // Recursively iterate through entire project tree and copy contents to destination repo.
 // Case to check if path is a file.
-void createRepo(const::std::string& root, const std::string& dst) {
+void createRepo(const std::string& root, const std::string& dst) {
 	fs::path repo = dst;
 	auto manifest_path = getManifestPath(repo);
 	createManifest(manifest_path);
@@ -32,7 +32,19 @@ void createRepo(const::std::string& root, const std::string& dst) {
 
 			fs::rename(repo_content_file.string(), id.string());
 
-			writeToManifest(manifest_path, id);
+			writeToManifest(manifest_path, fs::relative(id, repo));
+		}
+	}
+}
+
+void checkout(const std::string& src, const std::string &dst) {
+	fs::path potential_manifest = dst;
+	if (fs::exists(potential_manifest)) {
+		std::cout << "checkout from dst\n\n";
+	}
+	else {
+		if (isLabelInManifest(dst)) {
+			std::cout << "checkout from manifest.txt\n\n";
 		}
 	}
 }
