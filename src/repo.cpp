@@ -22,7 +22,7 @@ void createVersion(const std::string& root, const std::string& dst, int version)
 	for (auto &content : fs::recursive_directory_iterator(root)) {
 		auto repo_content = repo / fs::relative(content, root);
 
-		fs::create_directory(repo_content);
+		fs::create_directories(repo_content);
 
 		if (fs::is_regular_file(content.path())) {
 			fs::path repo_content_file = repo_content / content.path().filename();
