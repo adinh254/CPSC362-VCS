@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 void createRepo(const std::string& root, const std::string& dst) {
 	fs::path repo = dst;
 	auto manifest_path = getManifestPath(repo);
-	createManifest(manifest_path);
+	createManifest(manifest_path, root, dst);
 
 	for (auto &content : fs::recursive_directory_iterator(root)) {
 		auto repo_content = repo / fs::relative(content, root);

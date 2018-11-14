@@ -10,12 +10,16 @@ fs::path getManifestPath( const fs::path& repo ) {
 	fs::path file_name = "manifest.txt";
 	fs::path manifest_path = root_path / file_name;
 
+
 	return manifest_path;
 }
 
-void createManifest(const fs::path& manifest_path) {
+void createManifest(const fs::path& manifest_path, const std::string createRepoArg1 = "", std::string createRepoArg2 = "") {
 	std::ofstream out_file;
 	out_file.open( manifest_path );
+	if (createRepoArg1 != "" && createRepoArg1 != "") {
+		out_file << "Create Repo Arguments: " << createRepoArg1 << " " << createRepoArg2 << '\n';
+	}
 	out_file << "Time of Command: " << getTimeStamp() << '\n';
 	out_file << "Source Files: \n";
 
@@ -77,6 +81,9 @@ void addLabel(const std::string &label, const std::string &dst) {
 	else {
 		if (isLabelInManifest(dst)) {
 			writeLabel("manifest.txt", label);
+		}
+		else {
+			std::cout << "addLabel destination argument did not resolve to a file or label in manifest" << std::endl;
 		}
 	}
 }
