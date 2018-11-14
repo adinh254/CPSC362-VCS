@@ -13,6 +13,39 @@ fs::path getManifestPath(const fs::path& repo, int version) {
 	return manifest_path;
 }
 
+std::vector<std::string> getManifestsFromPath(const fs::path& repo) {
+	fs::path root_path = repo;
+	std::vector<std::string> result;
+
+	for (auto & p : fs::directory_iterator(root_path)) {
+		if (p.path().stem().string().find("manifest") != std::string::npos) {
+			result.push_back(p.path().stem().string());
+		}
+	}
+
+	return result;
+}
+
+fs::path findManifestByLabel(const fs::path& repo, const std::string &label) {
+	//get all the current manifests
+	std::vector<std::string> manifests = getManifestsFromPath(repo);
+	// check each manifest for the label
+	for (auto it = manifests.begin(); it != manifests.end(); ++it) {
+		std::ifstream manifest(repo.string() + "/" + *it + ".txt");
+		std::string line;
+		// look at each line in the manifest for the label
+		while (std::getline(manifest, line)) {
+			if (line == "Label: " + label) {
+				manifest.close();
+				return repo / (*it + ".txt");
+			}
+		}
+		manifest.close();
+	}
+	// return "" if not found
+	return "";
+}
+
 void createManifest(const fs::path& manifest_path, const std::string createRepoArg1 = "", std::string createRepoArg2 = "") {
 	std::ofstream out_file;
 	out_file.open( manifest_path );
