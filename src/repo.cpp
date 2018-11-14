@@ -11,12 +11,8 @@ namespace fs = std::filesystem;
 // Recursively iterate through entire project tree and copy contents to destination repo.
 // Case to check if path is a file.
 void createRepo(const std::string& root, const std::string& dst) {
-	createVersion(root, dst, 1);
-}
-
-void createVersion(const std::string& root, const std::string& dst, int version) {
 	fs::path repo = dst;
-	auto manifest_path = getManifestPath(repo, version);
+	auto manifest_path = getManifestPath(repo);
 	createManifest(manifest_path, root, dst);
 
 	for (auto &content : fs::recursive_directory_iterator(root)) {
@@ -41,38 +37,41 @@ void createVersion(const std::string& root, const std::string& dst, int version)
 	}
 }
 
-int getLatestVersion(const std::string &src) {
-	int latest_version = 0;
-	for (auto &content : fs::directory_iterator(src)) {
-		auto content_path = content.path();
-		if (content_path.string().find("manifest_") != std::string::npos) {
-			auto file_name = content_path.string();
-			auto start = file_name.find("_");
-			auto end = file_name.find(".");
-			auto version = std::stoi(file_name.substr(start + 1, end - 1));
-
-			if (latest_version < version) {
-				latest_version = version;
-			}
-		}
-	}
-	return latest_version;
-}
-
-void checkout(const std::string& src, const std::string &dst) {
-	fs::path potential_manifest = dst;
+// src argument is manifest path
+// dst is target repo path
+void checkout(const std::string& src, const std::string& dst) {
+	fs::path potential_manifest = src;
+	fs::path target_repo = dst;
+	
 	if (fs::exists(potential_manifest)) {
 		std::cout << "checkout from dst\n\n";
 	}
-	else {
-		if (isLabelInManifest(dst)) {
-			std::cout << "checkout from manifest.txt\n\n";
-		}
-	}
 }
 
-void checkin(const std::string& src, const std::string &dst) {
-	auto version = getLatestVersion(dst);
+// overloaded if user wants label as an argument
+void checkout( const std::string& src, const std::string& dst, const std::string& label ) {
+	fs::path potential_manifest = src;
+	fs::path target_repo = dst;
+	fs::path manifest_path = findManifestByLabel( src, label );
+	fs::create_directory( dst );
+	if( fs::is_empty( manifest_path ) ) {
+		std::cerr << "Label does not exist!" << '\n';
+	}
+	else {
+		// Copy everything from parent path of manifest
+		fs::copy( manifest_path.parent_path(), target_repo, fs::copy_options::recursive );
+		fs::path checkout_manifest = target_repo / manifest_path.filename();
+		// Insert checkout commands to copied manifest
+		std::ofstream temp( "temp.txt" );
+		std::ifstream manifest( checkout_manifest );
 
-	createVersion(src, dst, version);
+		temp << "check-out Arguments: " << src << ' ' << dst << ' ' << label << '\n';
+		temp << manifest.rdbuf();
+
+		manifest.close();
+		temp.close();
+
+		fs::remove( checkout_manifest );
+		fs::rename( "temp.txt", checkout_manifest);
+	}
 }

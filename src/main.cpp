@@ -21,15 +21,16 @@ int main(int argc, char *argv[]) {
 		addLabel(arg1, arg2);
 	}
 	else if (cmd == "check-out") {
-		checkout(arg1, arg2);
+		if( argc > 4 ) {
+			std::string arg3 = argv[4];
+			checkout( arg1, arg2, arg3 );
+		}
+		else {
+			checkout( arg1, arg2 );
+		}
 	}
 	else if (cmd == "check-in") {
-		checkin(arg1, arg2);
-	}
-	else if (cmd == "ver") {
-
-		//should delete this, is only for testing purposes
-		std::cout << "Latest Version: " << getLatestVersion(arg1);
+		std::cout << "Check in" << std::endl;
 	}
 	else {
 		std::cout << "Command not found." << std::endl;
