@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-fs::path getManifestPath( const fs::path& repo );
+fs::path getManifestPath(const fs::path& repo, int version);
 std::vector<std::string> getManifestsFromPath(const fs::path& repo);
 int getMostRecentManifest(const fs::path& repo);
 fs::path findManifestByLabel(const fs::path& repo, const std::string &label);

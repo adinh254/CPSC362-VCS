@@ -5,12 +5,10 @@ namespace fs = std::filesystem;
 // Create new folder in top repo.
 // Create symbolic link to latest repo manifest.
 // Prints time and date in manifest.
-fs::path getManifestPath( const fs::path& repo ) {
+fs::path getManifestPath(const fs::path& repo, int version) {
 	fs::path root_path = repo;
-	fs::path file_name = "manifest.txt";
-
+	fs::path file_name = "manifest_" + std::to_string(version) + ".txt";
 	fs::path manifest_path = root_path / file_name;
-
 
 	return manifest_path;
 }
