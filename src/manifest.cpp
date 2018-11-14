@@ -8,6 +8,7 @@ namespace fs = std::filesystem;
 fs::path getManifestPath( const fs::path& repo ) {
 	fs::path root_path = repo;
 	fs::path file_name = "manifest.txt";
+
 	fs::path manifest_path = root_path / file_name;
 
 
@@ -25,6 +26,23 @@ std::vector<std::string> getManifestsFromPath(const fs::path& repo) {
 	}
 
 	return result;
+}
+
+int getMostRecentManifest(const fs::path& repo) {
+	//get all the current manifests
+	std::vector<std::string> manifests = getManifestsFromPath(repo);
+	int largest = 0;
+	for (auto it = manifests.begin(); it != manifests.end(); ++it) {
+		std::string manifestName = *it;
+		size_t last_index = manifestName.find_last_not_of("0123456789");
+		std::string num = manifestName.substr(last_index + 1);
+		int result = stoi(num);
+		if (result > largest) {
+			largest = result;
+		}
+	}
+
+	return largest;
 }
 
 fs::path findManifestByLabel(const fs::path& repo, const std::string &label) {
