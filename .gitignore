@@ -1,4 +1,9 @@
 .vs/
+.vscode/
+bin/
+include/
+lib/
+build.bat
 Debug/
 CPSC362-VCS.sln
 CPSC362-VCS.vcxproj*

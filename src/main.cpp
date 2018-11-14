@@ -24,7 +24,12 @@ int main(int argc, char *argv[]) {
 		checkout(arg1, arg2);
 	}
 	else if (cmd == "check-in") {
-		std::cout << "Check in" << std::endl;
+		checkin(arg1, arg2);
+	}
+	else if (cmd == "ver") {
+
+		//should delete this, is only for testing purposes
+		std::cout << "Latest Version: " << getLatestVersion(arg1);
 	}
 	else {
 		std::cout << "Command not found." << std::endl;

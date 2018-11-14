@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-fs::path getManifestPath( const fs::path& repo );
+fs::path getManifestPath(const fs::path& repo, int version);
 void createManifest(const fs::path& manifest_path, const std::string createRepoArg1, const std::string createRepoArg2);
 void writeToManifest(const fs::path& manifest_path, const fs::path& file_path);
 std::string getTimeStamp();
