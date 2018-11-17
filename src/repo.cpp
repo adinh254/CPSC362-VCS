@@ -75,7 +75,6 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 
 	std::string line;
 	while (std::getline(manifest_file, line)) {
-		std::cout << line << "\n\n";
 		if (check_label) {
 			if (line == "Label: " + label) {
 				check_label = false;
@@ -92,39 +91,22 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 					break;
 				}
 				else {
-					std::cout << "Copying: " << line;
-					std::cout << " To: " << line.substr(0, line.find_last_of(dir_symbol)) << "\n";
-					fs::copy_file(line, line.substr(0, line.find_last_of(dir_symbol)), fs::copy_options::recursive);
+					fs::path src_path = src;
+					fs::path dst_path = dst;
+					src_path /= line;
+					dst_path /= line.substr(0, line.find_last_of(dir_symbol));
+					try {
+						fs::create_directory(dst_path.parent_path());
+						fs::copy_file(src_path.string(), dst_path.string(), fs::copy_options::recursive);
+					}
+					catch(fs::filesystem_error& e) {
+						std::cout << "Could not copy " << line << " " << e.what() << '\n';
+					}
 				}
 			}
 		}
 	}
 	manifest_file.close();
-
-/*	fs::path src_path = src;
-	fs::path manifest_path = manifest;
-
-	fs::create_directory(dst);
-
-	// Copy everything from parent path of manifest
-	fs::copy( manifest_path.parent_path(), dst, fs::copy_options::recursive );
-	fs::path checkout_manifest = dst / manifest_path.filename();
-	// Insert checkout commands to copied manifest
-	std::ofstream temp( "temp.txt" );
-	std::ifstream manifest_file( checkout_manifest );
-
-	temp << "check-out Arguments: " << src << ' ' << dst;
-	if (label != "") {
-		temp << ' ' << label;
-	}
-	temp << '\n';
-	temp << manifest_file.rdbuf();
-
-	manifest_file.close();
-	temp.close();
-
-	fs::remove( checkout_manifest );
-	fs::rename( "temp.txt", checkout_manifest); */
 }
 
 // src argument is manifest path
