@@ -17,6 +17,7 @@ void createRepo(const std::string& root, const std::string& dst) {
 void createVersion(const std::string& root, const std::string& dst, int version) {
 	fs::path repo = dst;
 	auto manifest_path = getManifestPath(repo, version);
+
 	createManifest(manifest_path, root, dst);
 
 	for (auto &content : fs::recursive_directory_iterator(root)) {
@@ -59,15 +60,20 @@ int getLatestVersion(const std::string &src) {
 	return latest_version;
 }
 
-void checkoutUsingManifest(const fs::path &src, const fs::path &dst, const fs::path &manifest, const std::string &label = "") {
+void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
+	fs::path src_path = src;
+	fs::path manifest_path = manifest;
+
+	fs::create_directory(dst);
+
 	// Copy everything from parent path of manifest
-	fs::copy( manifest.parent_path(), dst, fs::copy_options::recursive );
-	fs::path checkout_manifest = dst / manifest.filename();
+	fs::copy( manifest_path.parent_path(), dst, fs::copy_options::recursive );
+	fs::path checkout_manifest = dst / manifest_path.filename();
 	// Insert checkout commands to copied manifest
 	std::ofstream temp( "temp.txt" );
 	std::ifstream manifest_file( checkout_manifest );
 
-	temp << "check-out Arguments: " << src.string() << ' ' << dst.string();
+	temp << "check-out Arguments: " << src << ' ' << dst;
 	if (label != "") {
 		temp << ' ' << label;
 	}
@@ -84,32 +90,24 @@ void checkoutUsingManifest(const fs::path &src, const fs::path &dst, const fs::p
 // src argument is manifest path
 // dst is target repo path
 void checkout(const std::string& src, const std::string& dst) {
+	auto version = getLatestVersion(src);
 	fs::path potential_manifest = src;
-	fs::path target_repo = dst;
+
+	potential_manifest /= "manifest_" + std::to_string(version) + ".txt";
 
 	if (fs::exists(potential_manifest)) {
-		auto version = getLatestVersion(src);
-		fs::path manifest_path = src;
-
-		fs::create_directory(dst);
-
-		manifest_path /= "manifest_" + std::to_string(version) + ".txt";
-
-		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
+		checkoutUsingManifest(src, dst, potential_manifest.string());
 	}
 }
 
 // overloaded if user wants label as an argument
-void checkout( const std::string& src, const std::string& dst, const std::string& label ) {
-	fs::path potential_manifest = src;
-	fs::path target_repo = dst;
+void checkout(const std::string& src, const std::string& dst, const std::string& label) {
 	fs::path manifest_path = findManifestByLabel( src, label );
 	if( fs::is_empty( manifest_path ) ) {
 		std::cerr << "Label does not exist!" << '\n';
 	}
 	else {
-		fs::create_directory(dst);
-		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
+		checkoutUsingManifest(src, dst, manifest_path.string(), label);
 	}
 }
 
