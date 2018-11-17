@@ -86,11 +86,13 @@ void checkoutUsingManifest(const fs::path &src, const fs::path &dst, const fs::p
 void checkout(const std::string& src, const std::string& dst) {
 	fs::path potential_manifest = src;
 	fs::path target_repo = dst;
-	
+
 	if (fs::exists(potential_manifest)) {
 		auto version = getLatestVersion(src);
 		fs::path manifest_path = src;
-	
+
+		fs::create_directory(dst);
+
 		manifest_path /= "manifest_" + std::to_string(version) + ".txt";
 
 		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
@@ -102,11 +104,11 @@ void checkout( const std::string& src, const std::string& dst, const std::string
 	fs::path potential_manifest = src;
 	fs::path target_repo = dst;
 	fs::path manifest_path = findManifestByLabel( src, label );
-	fs::create_directory( dst );
 	if( fs::is_empty( manifest_path ) ) {
 		std::cerr << "Label does not exist!" << '\n';
 	}
 	else {
+		fs::create_directory(dst);
 		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
 	}
 }
