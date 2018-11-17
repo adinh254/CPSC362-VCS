@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	else if (cmd == "check-in") {
-		std::cout << "Check in" << std::endl;
+		checkin(arg1, arg2);
 	}
 	else {
 		std::cout << "Command not found." << std::endl;
