@@ -70,7 +70,7 @@ void createManifest(const fs::path& manifest_path, const std::string createRepoA
 		out_file << "Create Repo Arguments: " << createRepoArg1 << " " << createRepoArg2 << '\n';
 	}
 	out_file << "Time of Command: " << getTimeStamp() << '\n';
-	out_file << "Source Files: \n";
+	out_file << "Source Files:\n";
 
 	out_file.close();
 }

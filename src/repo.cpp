@@ -61,7 +61,47 @@ int getLatestVersion(const std::string &src) {
 }
 
 void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
-	fs::path src_path = src;
+	fs::path test = "test";
+	test /= "test";
+	std::string dir_symbol = test.string().substr(4,1);
+	auto check_label = false;
+	auto in_source_files = false;
+
+	if (label != "") {
+		check_label = true;
+	}
+
+	std::ifstream manifest_file(manifest);
+
+	std::string line;
+	while (std::getline(manifest_file, line)) {
+		std::cout << line << "\n\n";
+		if (check_label) {
+			if (line == "Label: " + label) {
+				check_label = false;
+			}
+		}
+		else {
+			if (!in_source_files) {
+				if (line == "Source Files:") {
+					in_source_files = true;
+				}
+			}
+			else {
+				if (line.substr(0, 15) == "Time of Command:") {
+					break;
+				}
+				else {
+					std::cout << "Copying: " << line;
+					std::cout << " To: " << line.substr(0, line.find_last_of(dir_symbol)) << "\n";
+					fs::copy_file(line, line.substr(0, line.find_last_of(dir_symbol)), fs::copy_options::recursive);
+				}
+			}
+		}
+	}
+	manifest_file.close();
+
+/*	fs::path src_path = src;
 	fs::path manifest_path = manifest;
 
 	fs::create_directory(dst);
@@ -84,7 +124,7 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 	temp.close();
 
 	fs::remove( checkout_manifest );
-	fs::rename( "temp.txt", checkout_manifest);
+	fs::rename( "temp.txt", checkout_manifest); */
 }
 
 // src argument is manifest path
