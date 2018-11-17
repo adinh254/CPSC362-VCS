@@ -59,6 +59,28 @@ int getLatestVersion(const std::string &src) {
 	return latest_version;
 }
 
+void checkoutUsingManifest(const fs::path &src, const fs::path &dst, const fs::path &manifest, const std::string &label = "") {
+	// Copy everything from parent path of manifest
+	fs::copy( manifest.parent_path(), dst, fs::copy_options::recursive );
+	fs::path checkout_manifest = dst / manifest.filename();
+	// Insert checkout commands to copied manifest
+	std::ofstream temp( "temp.txt" );
+	std::ifstream manifest_file( checkout_manifest );
+
+	temp << "check-out Arguments: " << src.string() << ' ' << dst.string();
+	if (label != "") {
+		temp << ' ' << label;
+	}
+	temp << '\n';
+	temp << manifest_file.rdbuf();
+
+	manifest_file.close();
+	temp.close();
+
+	fs::remove( checkout_manifest );
+	fs::rename( "temp.txt", checkout_manifest);
+}
+
 // src argument is manifest path
 // dst is target repo path
 void checkout(const std::string& src, const std::string& dst) {
@@ -66,7 +88,12 @@ void checkout(const std::string& src, const std::string& dst) {
 	fs::path target_repo = dst;
 	
 	if (fs::exists(potential_manifest)) {
-		std::cout << "checkout from dst\n\n";
+		auto version = getLatestVersion(src);
+		fs::path manifest_path = src;
+	
+		manifest_path /= "manifest_" + std::to_string(version) + ".txt";
+
+		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
 	}
 }
 
@@ -80,21 +107,7 @@ void checkout( const std::string& src, const std::string& dst, const std::string
 		std::cerr << "Label does not exist!" << '\n';
 	}
 	else {
-		// Copy everything from parent path of manifest
-		fs::copy( manifest_path.parent_path(), target_repo, fs::copy_options::recursive );
-		fs::path checkout_manifest = target_repo / manifest_path.filename();
-		// Insert checkout commands to copied manifest
-		std::ofstream temp( "temp.txt" );
-		std::ifstream manifest( checkout_manifest );
-
-		temp << "check-out Arguments: " << src << ' ' << dst << ' ' << label << '\n';
-		temp << manifest.rdbuf();
-
-		manifest.close();
-		temp.close();
-
-		fs::remove( checkout_manifest );
-		fs::rename( "temp.txt", checkout_manifest);
+		checkoutUsingManifest(potential_manifest, target_repo, manifest_path);
 	}
 }
 
