@@ -96,8 +96,8 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 					src_path /= line;
 					dst_path /= line.substr(0, line.find_last_of(dir_symbol));
 					try {
-						fs::create_directory(dst_path.parent_path());
-						fs::copy_file(src_path.string(), dst_path.string(), fs::copy_options::recursive);
+						fs::create_directories(dst_path.parent_path());
+						fs::copy_file(src_path.string(), dst_path.string(), fs::copy_options::overwrite_existing);
 					}
 					catch(fs::filesystem_error& e) {
 						std::cout << "Could not copy " << line << " " << e.what() << '\n';
@@ -114,7 +114,9 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 void checkout(const std::string& src, const std::string& dst, const std::string& manifest_info) {
 	if( manifest_info.find( "manifest" ) != std::string::npos ) {
 		// check if user specified manifest with extension.
-		std::string manifest_name = manifest_info;
+		std::string manifest_name = fs::path(manifest_info).filename().string();
+		std::cout << manifest_name << '\n';
+
 		std::string ext = ".txt";
 		if( manifest_info.rfind( ext ) == std::string::npos) {
 			manifest_name += ext;
