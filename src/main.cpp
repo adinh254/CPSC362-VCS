@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 			checkout( arg1, arg2, arg3 );
 		}
 		else {
-			checkout( arg1, arg2 );
+			std::cerr << "check-out requires a command with at least 3 arguments." << std::endl;
 		}
 	}
 	else if (cmd == "check-in") {

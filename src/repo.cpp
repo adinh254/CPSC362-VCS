@@ -59,6 +59,8 @@ int getLatestVersion(const std::string &src) {
 }
 
 void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
+
+	std::cout << "\ncheckoutUsingManifest" << std::endl;
 	fs::path test = "test";
 	test /= "test";
 	std::string dir_symbol = test.string().substr(4,1);
@@ -109,26 +111,31 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 
 // src argument is manifest path
 // dst is target repo path
-void checkout(const std::string& src, const std::string& dst) {
-	auto version = getLatestVersion(src);
-	fs::path potential_manifest = src;
+void checkout(const std::string& src, const std::string& dst, const std::string& manifest_info) {
+	if( manifest_info.find( "manifest" ) != std::string::npos ) {
+		// check if user specified manifest with extension.
+		std::string manifest_name = manifest_info;
+		std::string ext = ".txt";
+		if( manifest_info.rfind( ".txt" ) == std::string::npos) {
+			manifest_name += ext;
+		}
 
-	potential_manifest /= "manifest_" + std::to_string(version) + ".txt";
-
-	if (fs::exists(potential_manifest)) {
-		checkoutUsingManifest(src, dst, potential_manifest.string());
-	}
-}
-
-// overloaded if user wants label as an argument
-void checkout(const std::string& src, const std::string& dst, const std::string& label) {
-	fs::path manifest_path = findManifestByLabel( src, label );
-	if( manifest_path.empty() ) {
-		std::cerr << "Label does not exist!" << '\n';
+		fs::path manifest_path = findManifestByName( src, manifest_name );
+		if( manifest_path.empty() ) {
+			std::cerr << "Label does not exist!" << '\n';
+		}
+		checkoutUsingManifest( src, dst, manifest_path.string() );
 	}
 	else {
-		checkoutUsingManifest(src, dst, manifest_path.string(), label);
+		fs::path manifest_path = findManifestByLabel( src, manifest_info );
+		if( manifest_path.empty() ) {
+			std::cerr << "Label does not exist!" << '\n';
+		}
+		else {
+			checkoutUsingManifest( src, dst, manifest_path.string(), manifest_info );
+		}
 	}
+
 }
 
 void checkin(const std::string& src, const std::string &dst) {

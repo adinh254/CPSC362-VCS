@@ -43,6 +43,18 @@ int getMostRecentManifest(const fs::path& repo) {
 	return largest;
 }
 
+fs::path findManifestByName( const fs::path& repo, const std::string& manifest_name ) {
+	std::vector<std::string> manifests = getManifestsFromPath( repo );
+
+	for( auto&& file_name : manifests ) {
+		file_name += ".txt";
+		if( file_name == manifest_name ) {
+			return repo / ( file_name );
+		}
+	}
+	return "";
+}
+
 fs::path findManifestByLabel(const fs::path& repo, const std::string &label) {
 	//get all the current manifests
 	std::vector<std::string> manifests = getManifestsFromPath(repo);
@@ -108,8 +120,7 @@ bool isLabelInManifest(const std::string &label) {
 	return false;
 }
 
-void writeLabel(const std::string &label, const std::string &dst) {
-	std::cout << "label: " << label << "dst: " << dst << std::endl;
+void writeLabel(const std::string &dst, const std::string &label) {
 	std::ofstream temp("temp.txt");
 	std::ifstream manifest(dst);
 
@@ -123,12 +134,17 @@ void writeLabel(const std::string &label, const std::string &dst) {
 	fs::rename("temp.txt", dst);
 }
 
-void addLabel(const std::string &label, const std::string &manifest_path) {
-	fs::path potential_manifest = manifest_path;
+void addLabel(const std::string &label, const std::string &dst) {
+	fs::path potential_manifest = dst;
 	if (fs::exists(potential_manifest)) {
-		writeLabel(label, potential_manifest.string());
+		writeLabel(potential_manifest.string(), label);
 	}
 	else {
-		std::cout << "addLabel(): manifest path" << manifest_path << " did not resolve" << std::endl;
+		if (isLabelInManifest(dst)) {
+			writeLabel("manifest.txt", label);
+		}
+		else {
+			std::cout << "addLabel destination argument did not resolve to a file or label in manifest" << std::endl;
+		}
 	}
 }
