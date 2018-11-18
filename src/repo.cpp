@@ -59,8 +59,6 @@ int getLatestVersion(const std::string &src) {
 }
 
 void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
-
-	std::cout << "\ncheckoutUsingManifest" << std::endl;
 	fs::path test = "test";
 	test /= "test";
 	std::string dir_symbol = test.string().substr(4,1);
@@ -112,7 +110,6 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 // src argument is manifest path
 // dst is target repo path
 void checkout(const std::string& src, const std::string& dst) {
-	std::cout << "\ncheckout()" << std::endl;
 	auto version = getLatestVersion(src);
 	fs::path potential_manifest = src;
 

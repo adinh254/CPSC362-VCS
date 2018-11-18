@@ -108,7 +108,8 @@ bool isLabelInManifest(const std::string &label) {
 	return false;
 }
 
-void writeLabel(const std::string &dst, const std::string &label) {
+void writeLabel(const std::string &label, const std::string &dst) {
+	std::cout << "label: " << label << "dst: " << dst << std::endl;
 	std::ofstream temp("temp.txt");
 	std::ifstream manifest(dst);
 
@@ -122,17 +123,12 @@ void writeLabel(const std::string &dst, const std::string &label) {
 	fs::rename("temp.txt", dst);
 }
 
-void addLabel(const std::string &label, const std::string &dst) {
-	fs::path potential_manifest = dst;
+void addLabel(const std::string &label, const std::string &manifest_path) {
+	fs::path potential_manifest = manifest_path;
 	if (fs::exists(potential_manifest)) {
-		writeLabel(potential_manifest.string(), label);
+		writeLabel(label, potential_manifest.string());
 	}
 	else {
-		if (isLabelInManifest(dst)) {
-			writeLabel("manifest.txt", label);
-		}
-		else {
-			std::cout << "addLabel destination argument did not resolve to a file or label in manifest" << std::endl;
-		}
+		std::cout << "addLabel(): manifest path" << manifest_path << " did not resolve" << std::endl;
 	}
 }
