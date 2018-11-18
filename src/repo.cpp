@@ -143,5 +143,5 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 void checkin(const std::string& src, const std::string &dst) {
 	auto version = getLatestVersion(dst);
 
-	createVersion(src, dst, version);
+	createVersion(src, dst, version + 1);
 }
