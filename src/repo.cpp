@@ -25,9 +25,17 @@ void createVersion(const std::string& root, const std::string& dst, int version)
 
 		fs::create_directory(repo_content);
 
-		if (fs::is_regular_file(content.path())) {
+		//skip is the manifest file.
+
+		if (fs::is_regular_file(content.path()) && content.path().filename().string().find("manifest") == std::string::npos) {
 			fs::path repo_content_file = repo_content / content.path().filename();
-			fs::copy_file(content.path().string(), repo_content_file.string());
+			try {
+				fs::copy_file(content.path().string(), repo_content_file.string());
+			}
+			catch (fs::filesystem_error& e) {
+				std::cout << "Could not copy file to repo when making new version. " << e.what() << '\n';
+			}
+			
 			
 			std::fstream repo_content_file_contents(repo_content_file.string());
 
@@ -170,6 +178,5 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 
 void checkin(const std::string& src, const std::string &dst) {
 	auto version = getLatestVersion(dst);
-
 	createVersion(src, dst, version + 1);
 }
