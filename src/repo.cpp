@@ -116,7 +116,7 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 		// check if user specified manifest with extension.
 		std::string manifest_name = manifest_info;
 		std::string ext = ".txt";
-		if( manifest_info.rfind( ".txt" ) == std::string::npos) {
+		if( manifest_info.rfind( ext ) == std::string::npos) {
 			manifest_name += ext;
 		}
 
