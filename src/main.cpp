@@ -21,13 +21,8 @@ int main(int argc, char *argv[]) {
 		addLabel(arg1, arg2);
 	}
 	else if (cmd == "check-out") {
-		if( argc > 4 ) {
-			std::string arg3 = argv[4];
-			checkout( arg1, arg2, arg3 );
-		}
-		else {
-			std::cerr << "check-out requires a command with at least 3 arguments." << std::endl;
-		}
+		std::string arg3 = argv[4];
+		checkout( arg1, arg2, arg3 );
 	}
 	else if (cmd == "check-in") {
 		checkin(arg1, arg2);

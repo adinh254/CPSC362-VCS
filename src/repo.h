@@ -12,7 +12,7 @@ int getLatestVersion(const std::string &src);
 void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest,
                             const std::string &label);
 
-void checkout(const std::string& src, const std::string& dst, const std::string& label );
+void checkout(const std::string& src, const std::string& dst, const std::string& manifest_info);
 void checkin(const std::string& src, const std::string &dst);
 
 #endif 

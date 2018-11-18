@@ -122,7 +122,7 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 
 		fs::path manifest_path = findManifestByName( src, manifest_name );
 		if( manifest_path.empty() ) {
-			std::cerr << "Label does not exist!" << '\n';
+			std::cerr << "Manifest file does not exist!" << '\n';
 		}
 		else {
 			checkoutUsingManifest( src, dst, manifest_path.string() );
