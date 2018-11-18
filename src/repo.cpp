@@ -124,7 +124,9 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 		if( manifest_path.empty() ) {
 			std::cerr << "Label does not exist!" << '\n';
 		}
-		checkoutUsingManifest( src, dst, manifest_path.string() );
+		else {
+			checkoutUsingManifest( src, dst, manifest_path.string() );
+		}
 	}
 	else {
 		fs::path manifest_path = findManifestByLabel( src, manifest_info );
