@@ -14,12 +14,19 @@ void createRepo(const std::string& root, const std::string& dst) {
 	createVersion(root, dst, 1);
 }
 
-void createVersion(const std::string& root, const std::string& dst, int version) {
+void createVersion(const std::string& root, const std::string& dst, int version, bool checkin) {
 	fs::path repo = dst;
 	auto manifest_path = getManifestPath(repo, version);
 
 	createManifest(manifest_path, root, dst);
 
+
+	if (checkin) {
+		std::ofstream out_file;
+		out_file.open(manifest_path, std::ios::app);
+		out_file << "Check In Arguments: " << root << " " << dst << '\n';
+		out_file.close();
+	}
 	for (auto &content : fs::recursive_directory_iterator(root)) {
 		auto repo_content = repo / fs::relative(content, root);
 
@@ -192,5 +199,5 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 
 void checkin(const std::string& src, const std::string &dst) {
 	auto version = getLatestVersion(dst);
-	createVersion(src, dst, version + 1);
+	createVersion(src, dst, version + 1, true);
 }
