@@ -58,9 +58,24 @@ int getLatestVersion(const std::string &src) {
 	return latest_version;
 }
 
-void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
 
-	std::cout << "\ncheckoutUsingManifest" << std::endl;
+void addCheckoutToManifest(const std::string &manifestPath, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
+	std::ofstream temp("temp.txt");
+	std::ifstream manifest(manifestPath);
+
+	temp << "Check Out Arguments: " << arg1 << " " << arg2 << " " << arg3 << '\n';
+	temp << manifest.rdbuf();
+
+	manifest.close();
+	temp.close();
+
+	fs::remove(manifestPath);
+	fs::rename("temp.txt", manifestPath);
+}
+
+
+void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
+
 	fs::path test = "test";
 	test /= "test";
 	std::string dir_symbol = test.string().substr(4,1);
@@ -71,7 +86,19 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 		check_label = true;
 	}
 
+	std::string newManifestPath = dst + "/" + fs::path(manifest).filename().string();
+	try {
+		fs::copy_file(manifest, newManifestPath, fs::copy_options::overwrite_existing);
+	}
+	catch (fs::filesystem_error& e) {
+		std::cout << "Could not copy manifest to destination. " << e.what() << '\n';
+	}
+
+	std::string arg3 = check_label ? label : manifest;
+	addCheckoutToManifest(newManifestPath, src, dst, arg3);
+
 	std::ifstream manifest_file(manifest);
+
 
 	std::string line;
 	while (std::getline(manifest_file, line)) {
@@ -115,7 +142,6 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 	if( manifest_info.find( "manifest" ) != std::string::npos ) {
 		// check if user specified manifest with extension.
 		std::string manifest_name = fs::path(manifest_info).filename().string();
-		std::cout << manifest_name << '\n';
 
 		std::string ext = ".txt";
 		if( manifest_info.rfind( ext ) == std::string::npos) {
@@ -127,7 +153,7 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 			std::cerr << "Manifest file does not exist!" << '\n';
 		}
 		else {
-			checkoutUsingManifest( src, dst, manifest_path.string() );
+			continueCheckout( src, dst, manifest_path.string() );
 		}
 	}
 	else {
@@ -136,7 +162,7 @@ void checkout(const std::string& src, const std::string& dst, const std::string&
 			std::cerr << "Label does not exist!" << '\n';
 		}
 		else {
-			checkoutUsingManifest( src, dst, manifest_path.string(), manifest_info );
+			continueCheckout( src, dst, manifest_path.string(), manifest_info );
 		}
 	}
 

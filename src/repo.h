@@ -9,7 +9,7 @@ void createVersion(const std::string& root, const std::string& dst, int version)
 
 int getLatestVersion(const std::string &src);
 
-void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest,
+void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest,
                             const std::string &label);
 
 void checkout(const std::string& src, const std::string& dst, const std::string& manifest_info);
