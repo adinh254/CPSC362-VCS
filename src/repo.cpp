@@ -122,7 +122,8 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 				}
 			}
 			else {
-				if (line.substr(0, 15) == "Time of Command:") {
+				//skip copying timestamp and previous checkout args
+				if (line.substr(0, 15) == "Time of Command:" || line.substr(0, 19) == "Check Out Arguments:") {
 					break;
 				}
 				else {
@@ -141,6 +142,19 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 			}
 		}
 	}
+
+	//create a new manifest in the repo (for the repo's records)
+	auto version = getLatestVersion(dst);
+	//copy the new manifest we created in check-out but change it's name to a new version
+	auto repo_manifest_path = getManifestPath(src, version + 1);
+	std::cout << "Could not copy new manifest to repo" << repo_manifest_path << '\n';
+	try {
+		fs::copy_file(newManifestPath, repo_manifest_path.string());
+	}
+	catch (fs::filesystem_error& e) {
+		std::cout << "Could not copy new manifest to repo" << e.what() << '\n';
+	}
+
 	manifest_file.close();
 }
 
