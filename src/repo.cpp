@@ -126,7 +126,7 @@ void checkout(const std::string& src, const std::string& dst) {
 // overloaded if user wants label as an argument
 void checkout(const std::string& src, const std::string& dst, const std::string& label) {
 	fs::path manifest_path = findManifestByLabel( src, label );
-	if( fs::is_empty( manifest_path ) ) {
+	if( manifest_path.empty() ) {
 		std::cerr << "Label does not exist!" << '\n';
 	}
 	else {
