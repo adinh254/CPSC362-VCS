@@ -5,7 +5,7 @@
 
 // Copies original project tree and creates a new repo at the destination with the entire project tree inside.
 void createRepo(const std::string& root, const std::string& dst);
-void createVersion(const std::string& root, const std::string& dst, int version);
+void createVersion(const std::string& root, const std::string& dst, int version, bool checkin = false);
 
 int getLatestVersion(const std::string &src);
 
