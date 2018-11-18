@@ -45,13 +45,11 @@ void createVersion(const std::string& root, const std::string& dst, int version)
 int getLatestVersion(const std::string &src) {
 	int latest_version = 0;
 	for (auto &content : fs::directory_iterator(src)) {
-		auto content_path = content.path();
-		if (content_path.string().find("manifest_") != std::string::npos) {
-			auto file_name = content_path.string();
-			auto start = file_name.find("_");
-			auto end = file_name.find(".");
-			auto version = std::stoi(file_name.substr(start + 1, end - 1));
-
+		std::string file_name = content.path().stem().string();
+		if (file_name.find("manifest_") != std::string::npos) {
+			size_t last_index = file_name.find_last_not_of("0123456789");
+			std::string num = file_name.substr(last_index + 1);
+			int version = stoi(num);
 			if (latest_version < version) {
 				latest_version = version;
 			}
@@ -61,6 +59,8 @@ int getLatestVersion(const std::string &src) {
 }
 
 void checkoutUsingManifest(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
+
+	std::cout << "\ncheckoutUsingManifest" << std::endl;
 	fs::path test = "test";
 	test /= "test";
 	std::string dir_symbol = test.string().substr(4,1);
@@ -112,6 +112,7 @@ void checkoutUsingManifest(const std::string &src, const std::string &dst, const
 // src argument is manifest path
 // dst is target repo path
 void checkout(const std::string& src, const std::string& dst) {
+	std::cout << "\ncheckout()" << std::endl;
 	auto version = getLatestVersion(src);
 	fs::path potential_manifest = src;
 
