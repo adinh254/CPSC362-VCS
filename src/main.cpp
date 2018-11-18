@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 		createRepo(arg1, arg2);
 	}
 	else if (cmd == "label") {
-		addLabel(arg1, arg2);
+		addLabel(arg2, arg1);
 	}
 	else if (cmd == "check-out") {
 		std::string arg3 = argv[4];
