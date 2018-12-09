@@ -27,6 +27,10 @@ int main(int argc, char *argv[]) {
 	else if (cmd == "check-in") {
 		checkin(arg1, arg2);
 	}
+	else if (cmd == "merge") {
+		std::string arg3 = argv[4] ? argv[4] : "";
+		merge(arg1, arg2, arg3);
+	}
 	else {
 		std::cout << "Command not found." << std::endl;
 	}

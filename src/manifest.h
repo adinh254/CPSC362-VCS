@@ -23,5 +23,7 @@ bool isLabelInManifest(const std::string &label);
 void writeLabel(const std::string &dst, const std::string &label);
 void addLabel(const std::string &label, const std::string &dst);
 
+std::string getMostRecentCommonAncestor(const std::string manifestPath1, const std::string manifestPath2);
+
 #endif // !MANIFEST_H
 

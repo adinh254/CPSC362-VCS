@@ -148,3 +148,7 @@ void addLabel(const std::string &label, const std::string &dst) {
 		}
 	}
 }
+
+std::string getMostRecentCommonAncestor(const std::string manifestPath1, const std::string manifestPath2) {
+
+}

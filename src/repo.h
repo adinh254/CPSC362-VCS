@@ -15,4 +15,7 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 void checkout(const std::string& src, const std::string& dst, const std::string& manifest_info);
 void checkin(const std::string& src, const std::string &dst);
 
+void merge(const std::string& repo, const std::string &target, const std::string label);
+void continueMerge(const std::string& repo, const std::string &target, const std::string repoVersion);
+
 #endif 
