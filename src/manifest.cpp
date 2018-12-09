@@ -60,7 +60,11 @@ fs::path findManifestByLabel(const fs::path& repo, const std::string &label) {
 	std::vector<std::string> manifests = getManifestsFromPath(repo);
 	// check each manifest for the label
 	for (auto it = manifests.begin(); it != manifests.end(); ++it) {
-		std::ifstream manifest(repo.string() + "/" + *it + ".txt");
+		fs::path manifest_path = repo;
+		
+		manifest_path /=  *it + ".txt";
+
+		std::ifstream manifest(manifest_path.string());
 		std::string line;
 		// look at each line in the manifest for the label
 		while (std::getline(manifest, line)) {
@@ -140,11 +144,13 @@ void addLabel(const std::string &label, const std::string &dst) {
 		writeLabel(potential_manifest.string(), label);
 	}
 	else {
-		if (isLabelInManifest(dst)) {
-			writeLabel("manifest.txt", label);
+		auto manifest_path = findManifestByLabel( fs::current_path(), dst );
+
+		if( manifest_path.empty() ) {
+			std::cerr << "Label does not exist!" << '\n';
 		}
 		else {
-			std::cout << "addLabel destination argument did not resolve to a file or label in manifest" << std::endl;
+			writeLabel(manifest_path.string(), label);
 		}
 	}
 }

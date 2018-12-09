@@ -90,7 +90,6 @@ void addCheckoutToManifest(const std::string &manifestPath, const std::string &a
 
 
 void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "") {
-
 	fs::path test = "test";
 	test /= "test";
 	std::string dir_symbol = test.string().substr(4,1);
@@ -101,16 +100,19 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 		check_label = true;
 	}
 
-	std::string newManifestPath = dst + "/" + fs::path(manifest).filename().string();
+	fs::path new_manifest_path = dst;
+
+	new_manifest_path /= fs::path(manifest).filename();
+
 	try {
-		fs::copy_file(manifest, newManifestPath, fs::copy_options::overwrite_existing);
+		fs::copy_file(manifest, new_manifest_path.string(), fs::copy_options::overwrite_existing);
 	}
 	catch (fs::filesystem_error& e) {
 		std::cout << "Could not copy manifest to destination. " << e.what() << '\n';
 	}
 
 	std::string arg3 = check_label ? label : manifest;
-	addCheckoutToManifest(newManifestPath, src, dst, arg3);
+	addCheckoutToManifest(new_manifest_path.string(), src, dst, arg3);
 
 	std::ifstream manifest_file(manifest);
 
@@ -154,9 +156,9 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 	auto version = getLatestVersion(dst);
 	//copy the new manifest we created in check-out but change it's name to a new version
 	auto repo_manifest_path = getManifestPath(src, version + 1);
-	std::cout << "Could not copy new manifest to repo" << repo_manifest_path << '\n';
+
 	try {
-		fs::copy_file(newManifestPath, repo_manifest_path.string());
+		fs::copy_file(new_manifest_path.string(), repo_manifest_path.string());
 	}
 	catch (fs::filesystem_error& e) {
 		std::cout << "Could not copy new manifest to repo" << e.what() << '\n';
