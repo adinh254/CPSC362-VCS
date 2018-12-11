@@ -8,8 +8,9 @@ namespace fs = std::filesystem;
 
 // Array and vector to store weighted numbers and file content.
 // For loop to calculate check sum.
-fs::path getArtifactID(const fs::path& path, std::fstream& my_file) {
-	std::array <int, 5> weight = { 1, 3, 5, 7, 17 };
+fs::path getArtifactID(const fs::path &path, std::fstream &my_file)
+{
+	std::array<int, 5> weight = {1, 3, 5, 7, 17};
 	std::vector<char> artifact;
 
 	char ch;
@@ -19,14 +20,16 @@ fs::path getArtifactID(const fs::path& path, std::fstream& my_file) {
 	fs::path art_id;
 
 	// Get file content.
-	while (my_file.get(ch)) {
+	while (my_file.get(ch))
+	{
 		artifact.push_back(ch);
 		file_size++;
 	}
 
 	// Calculate check sum.
 	unsigned int weight_index = 0;
-	for (auto& c : artifact) {
+	for (auto &c : artifact)
+	{
 		sum += c * weight[weight_index];
 		if (weight_index == 4)
 			weight_index = 0;

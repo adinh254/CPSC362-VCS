@@ -5,6 +5,6 @@
 #include <fstream>
 
 // Calculates content of artifact to get ID.
-std::filesystem::path getArtifactID(const std::filesystem::path& path, std::fstream& myFile);
+std::filesystem::path getArtifactID(const std::filesystem::path &path, std::fstream &myFile);
 
 #endif

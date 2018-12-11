@@ -1,0 +1,6 @@
+Check Out Arguments: test\repos\mypt : test\checkouts\mypt
+Check In Arguments: test\mypt : test\repos\mypt
+Create Repo Arguments: test\mypt test\repos\mypt
+Time of Command: 01:18:34 December 11, 2018
+Source Files:
+hx.txt\72-L1.txt
