@@ -1,4 +1,4 @@
-#include "repo.h"
+ #include "repo.h"
 #include "artifact.h"
 #include "manifest.h"
 
@@ -299,7 +299,7 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 		std::cerr << "Could not open target manifest file:" + targetManifestPath << '\n';
 	}
 
-	std::string repo_line;
+	std::string repo_line; 
 	bool repo_in_source_files = false;
 	//will contain all the files paths relative to the repo
 	std::vector<std::string> repoFiles;
@@ -358,28 +358,36 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 			target_artifact_name = target_file_path.filename().string();
 
 			if (repo_artifact_path == target_artifact_path)
-			{
+			{ 
 				foundInTarget = true;
 				std::cout << "\nMATCH: " << repo_file_path << ", " << target_file_path << "\n";
-				break;
-			}
-		}
-		if (foundInTarget)
-		{
-			if (repo_artifact_name != target_artifact_name)
-			{   //file versions are different (conflict)
-				//std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
+				//break;
+				if (foundInTarget)
+				{
+					if (repo_artifact_name != target_artifact_name)
+					{   //file versions are different (conflict)
+						//std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
 
-				//std::string ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
-				//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
-				//TODO: add _MR, _MT, and _MG versions to conflicted target file
+						//std::string ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
+						//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
+						//TODO: add _MR, _MT, and _MG versions to conflicted target file
+						fs::copy_file(repo_artifact_path, target_artifact_path);
+						fs::rename(repo_artifact_name, repo_artifact_name + "_MR");
+						fs::copy_file(repo_artifact_path, target_artifact_path);
+						fs::rename(repo_artifact_name, repo_artifact_name + "_MT");
+						fs::copy_file(repo_artifact_path, target_artifact_path);
+						fs::rename(repo_artifact_name, repo_artifact_name + "_MG");
+					}
+					else
+					{
+					fs::copy_file(repo_artifact_path, target_artifact_path);
+					//TODO: add repo_file_path to target
+					}
+				
+				}
+			
 			}
 		}
-		else
-		{
-			//TODO: add repo_file_path to target
-		}
-	}
 
 	//TODO: create new manifest in target
 }
