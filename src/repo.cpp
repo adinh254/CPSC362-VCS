@@ -291,7 +291,10 @@ void merge(const std::string &repo, const std::string &target, const std::string
 }
 
 //utility function for merge function
-void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName) {
+
+
+void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName)
+{
 	std::cout << "\ncontinueMerge: " << repo << ", " << target << ", " << manifestFileName << '\n';
 
 	//open repo manifest file
@@ -311,7 +314,7 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 		std::cerr << "Could not open target manifest file:" + targetManifestPath << '\n';
 	}
 
-	std::string repo_line; 
+	std::string repo_line;
 	bool repo_in_source_files = false;
 	//will contain all the files paths relative to the repo
 	std::vector<std::string> repoFiles;
@@ -370,45 +373,28 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 			target_artifact_name = target_file_path.filename().string();
 
 			if (repo_artifact_path == target_artifact_path)
-			{ 
+			{
 				foundInTarget = true;
 				std::cout << "\nMATCH: " << repo_file_path << ", " << target_file_path << "\n";
-				//break;
-				if (foundInTarget)
-				{
-					if (repo_artifact_name != target_artifact_name)
-					{   //file versions are different (conflict)
-						//std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
-
-						//std::string ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
-						//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
-						//TODO: add _MR, _MT, and _MG versions to conflicted target file
-						fs::copy_file(repo_artifact_path, target_artifact_path);
-						fs::rename(repo_artifact_name, repo_artifact_name + "_MR");
-						fs::copy_file(repo_artifact_path, target_artifact_path);
-						fs::rename(repo_artifact_name, repo_artifact_name + "_MT");
-						fs::copy_file(repo_artifact_path, target_artifact_path);
-						fs::rename(repo_artifact_name, repo_artifact_name + "_MG");
-						
-						auto target_artifact_version = getLatestVersion(target_artifact_path);
-						std::string target_manifest_loc = getManifestPath(target_artifact_path,target_artifact_version).string();
-				
-						createManifest(target_manifest_loc, repo_artifact_name, target_artifact_path);
-					}
-					else
-					{
-						fs::copy_file(repo_artifact_path, target_artifact_path);
-						auto target_artifact_version = getLatestVersion(target_artifact_path);
-						std::string target_manifest_loc = getManifestPath(target_artifact_path,target_artifact_version).string();
-						
-						createManifest(target_manifest_loc, repo_artifact_name, target_artifact_path);
-				
-					//TODO: add repo_file_path to target
-					}
-				
-				}
-			
+				break;
 			}
 		}
+		if (foundInTarget)
+		{
+			if (repo_artifact_name != target_artifact_name)
+			{   //file versions are different (conflict)
+				//std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
+
+				//std::string ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
+				//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
+				//TODO: add _MR, _MT, and _MG versions to conflicted target file
+			}
+		}
+		else
+		{
+			//TODO: add repo_file_path to target
+		}
 	}
+
+	//TODO: create new manifest in target
 }
