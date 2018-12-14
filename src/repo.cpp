@@ -377,10 +377,15 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 						fs::rename(repo_artifact_name, repo_artifact_name + "_MT");
 						fs::copy_file(repo_artifact_path, target_artifact_path);
 						fs::rename(repo_artifact_name, repo_artifact_name + "_MG");
+
+						std::string file_path = "Merge and rename: " + repo_artifact_name;
+						writeToManifest(targetManifestPath, file_path);
 					}
 					else
 					{
-					fs::copy_file(repo_artifact_path, target_artifact_path);
+						fs::copy_file(repo_artifact_path, target_artifact_path);
+						std::string file_path = "Merge file from" + repo_artifact_path + " to " + target_artifact_path;
+						writeToManifest(targetManifestPath, file_path); 
 					//TODO: add repo_file_path to target
 					}
 				
@@ -388,6 +393,6 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 			
 			}
 		}
-
+	
 	//TODO: create new manifest in target
 }
