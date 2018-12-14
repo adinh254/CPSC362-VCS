@@ -7,14 +7,13 @@
 
 namespace fs = std::filesystem;
 
-// Create new repo directory.
-// Recursively iterate through entire project tree and copy contents to destination repo.
-// Case to check if path is a file.
+// Create new repo in a path, dst, from a given path root
 void createRepo(const std::string &root, const std::string &dst)
 {
 	createVersion(root, dst, 1);
 }
 
+// creates a new version of a project. New version meaning a newly generated manifest.
 void createVersion(const std::string &root, const std::string &dst, int version, bool checkin)
 {
 	fs::path repo = dst;
@@ -69,6 +68,7 @@ void createVersion(const std::string &root, const std::string &dst, int version,
 	}
 }
 
+//get the latest version (manifest) number of a repo
 int getLatestVersion(const std::string &src)
 {
 	int latest_version = 0;
@@ -89,6 +89,7 @@ int getLatestVersion(const std::string &src)
 	return latest_version;
 }
 
+// adds the checkout arguments to a manifest.
 void addCheckoutToManifest(const std::string &manifestPath, const std::string &arg1, const std::string &arg2, const std::string &arg3)
 {
 	std::ofstream temp("temp.txt");
@@ -103,6 +104,54 @@ void addCheckoutToManifest(const std::string &manifestPath, const std::string &a
 
 	fs::remove(manifestPath);
 	fs::rename("temp.txt", manifestPath);
+}
+
+// src argument is manifest path
+// dst is target repo path
+void checkout(const std::string &src, const std::string &dst, const std::string &manifest_info)
+{
+	if (manifest_info.find("manifest") != std::string::npos)
+	{
+		// check if user specified manifest with extension.
+		std::string manifest_name = fs::path(manifest_info).filename().string();
+
+		std::string ext = ".txt";
+		if (manifest_info.rfind(ext) == std::string::npos) {
+			manifest_name += ext;
+		}
+		fs::path srcPath = src;
+		fs::path manifest_path;
+		std::vector<std::string> manifests = getManifestsFromPath(srcPath);
+		for (auto &&file_name : manifests) {
+			file_name += ".txt";
+			if (file_name == manifest_name) {
+				manifest_path = srcPath / file_name;
+				break;
+			}
+		}
+
+		std::cout << "manifestPath: " << manifest_path;
+		if (manifest_path.empty())
+		{
+			std::cerr << "Manifest file does not exist!" << '\n';
+		}
+		else
+		{
+			continueCheckout(src, dst, manifest_path.string());
+		}
+	}
+	else
+	{
+		fs::path manifest_path = findManifestByLabel(src, manifest_info);
+		if (manifest_path.empty())
+		{
+			std::cerr << "Label does not exist!" << '\n';
+		}
+		else
+		{
+			continueCheckout(src, dst, manifest_path.string(), manifest_info);
+		}
+	}
 }
 
 void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "")
@@ -199,60 +248,14 @@ void continueCheckout(const std::string &src, const std::string &dst, const std:
 	manifest_file.close();
 }
 
-// src argument is manifest path
-// dst is target repo path
-void checkout(const std::string &src, const std::string &dst, const std::string &manifest_info)
-{
-	if (manifest_info.find("manifest") != std::string::npos)
-	{
-		// check if user specified manifest with extension.
-		std::string manifest_name = fs::path(manifest_info).filename().string();
-
-		std::string ext = ".txt";
-		if (manifest_info.rfind(ext) == std::string::npos) {
-			manifest_name += ext;
-		}
-		fs::path srcPath = src;
-		fs::path manifest_path;
-		std::vector<std::string> manifests = getManifestsFromPath(srcPath);
-		for (auto &&file_name : manifests) {
-			file_name += ".txt";
-			if (file_name == manifest_name) {
-				manifest_path = srcPath / file_name;
-				break;
-			}
-		}
-
-		std::cout << "manifestPath: " << manifest_path;
-		if (manifest_path.empty())
-		{
-			std::cerr << "Manifest file does not exist!" << '\n';
-		}
-		else
-		{
-			continueCheckout(src, dst, manifest_path.string());
-		}
-	}
-	else
-	{
-		fs::path manifest_path = findManifestByLabel(src, manifest_info);
-		if (manifest_path.empty())
-		{
-			std::cerr << "Label does not exist!" << '\n';
-		}
-		else
-		{
-			continueCheckout(src, dst, manifest_path.string(), manifest_info);
-		}
-	}
-}
-
+// checkin function creates a new version with files specified in src
 void checkin(const std::string &src, const std::string &dst)
 {
 	auto version = getLatestVersion(dst);
 	createVersion(src, dst, version + 1, true);
 }
 
+//merges changes from a directory back into the repo, creating a new version.
 // repo is the path to the repo's manifest filename
 // OR if label arg is being used to indicate repo version, repo is path to the repo's root folder
 // and label is the label to select version
@@ -287,6 +290,7 @@ void merge(const std::string &repo, const std::string &target, const std::string
 	}
 }
 
+//utility function for merge function
 void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName) {
 	std::cout << "\ncontinueMerge: " << repo << ", " << target << ", " << manifestFileName << '\n';
 

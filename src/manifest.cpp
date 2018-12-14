@@ -50,6 +50,8 @@ int getMostRecentManifest(const fs::path &repo)
 	return largest;
 }
 
+// finds a manifest in a given repo with a specific label.
+// we assume labels are unique as per the design requirements.
 fs::path findManifestByLabel(const fs::path &repo, const std::string &label)
 {
 	//get all the current manifests
@@ -78,6 +80,8 @@ fs::path findManifestByLabel(const fs::path &repo, const std::string &label)
 	return "";
 }
 
+// creates a manifest with a given path.
+// also takes in the arguments for the create-repo command for the case where this function is used for repo creation.
 void createManifest(const fs::path &manifest_path, const std::string createRepoArg1 = "", std::string createRepoArg2 = "")
 {
 	std::ofstream out_file;
@@ -102,6 +106,7 @@ void writeToManifest(const fs::path &manifest_path, const fs::path &file_path)
 }
 
 // https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
+// returns a string timestamp
 std::string getTimeStamp()
 {
 	std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -113,37 +118,7 @@ std::string getTimeStamp()
 	return timedisplay;
 }
 
-bool isLabelInManifest(const std::string &label)
-{
-	std::ifstream manifest("manifest.txt", std::ios::app);
-	std::string line;
-	while (std::getline(manifest, line))
-	{
-		if (line == "Label: " + label)
-		{
-			manifest.close();
-			return true;
-		}
-	}
-	manifest.close();
-	return false;
-}
-
-void writeLabel(const std::string &dst, const std::string &label)
-{
-	std::ofstream temp("temp.txt");
-	std::ifstream manifest(dst);
-
-	temp << "Label: " + label + '\n';
-	temp << manifest.rdbuf();
-
-	manifest.close();
-	temp.close();
-
-	fs::remove(dst);
-	fs::rename("temp.txt", dst);
-}
-
+//function to write a label into a given manifest
 void addLabel(const std::string &label, const std::string &dst)
 {
 	fs::path potential_manifest = dst;
@@ -165,6 +140,23 @@ void addLabel(const std::string &label, const std::string &dst)
 		}
 	}
 }
+
+//utility function for addLabel to write to the manifest file
+void writeLabel(const std::string &dst, const std::string &label)
+{
+	std::ofstream temp("temp.txt");
+	std::ifstream manifest(dst);
+
+	temp << "Label: " + label + '\n';
+	temp << manifest.rdbuf();
+
+	manifest.close();
+	temp.close();
+
+	fs::remove(dst);
+	fs::rename("temp.txt", dst);
+}
+
 
 void backtrackManifest(const std::string manifest, std::vector<std::string> &list)
 {
@@ -250,6 +242,7 @@ void backtrackManifest(const std::string manifest, std::vector<std::string> &lis
 	manifest_file.close();
 }
 
+// given two manifest paths, returns the path of the most recent common ancestor manifest
 std::string getMostRecentCommonAncestor(const std::string manifestPath1, const std::string manifestPath2)
 {
 	std::vector<std::string> manifest1_manifest_list;
