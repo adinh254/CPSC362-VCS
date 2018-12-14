@@ -209,12 +209,21 @@ void checkout(const std::string &src, const std::string &dst, const std::string 
 		std::string manifest_name = fs::path(manifest_info).filename().string();
 
 		std::string ext = ".txt";
-		if (manifest_info.rfind(ext) == std::string::npos)
-		{
+		if (manifest_info.rfind(ext) == std::string::npos) {
 			manifest_name += ext;
 		}
+		fs::path srcPath = src;
+		fs::path manifest_path;
+		std::vector<std::string> manifests = getManifestsFromPath(srcPath);
+		for (auto &&file_name : manifests) {
+			file_name += ".txt";
+			if (file_name == manifest_name) {
+				manifest_path = srcPath / file_name;
+				break;
+			}
+		}
 
-		fs::path manifest_path = findManifestByName(src, manifest_name);
+		std::cout << "manifestPath: " << manifest_path;
 		if (manifest_path.empty())
 		{
 			std::cerr << "Manifest file does not exist!" << '\n';
@@ -278,8 +287,7 @@ void merge(const std::string &repo, const std::string &target, const std::string
 	}
 }
 
-void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName)
-{
+void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName) {
 	std::cout << "\ncontinueMerge: " << repo << ", " << target << ", " << manifestFileName << '\n';
 
 	//open repo manifest file
@@ -398,6 +406,5 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 			
 			}
 		}
-	
-	//TODO: create new manifest in target
+	}
 }

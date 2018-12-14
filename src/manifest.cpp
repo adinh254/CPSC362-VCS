@@ -2,9 +2,7 @@
 
 namespace fs = std::filesystem;
 
-// Create new folder in top repo.
-// Create symbolic link to latest repo manifest.
-// Prints time and date in manifest.
+//gets a the path of specific version manifest file inside a given repo.
 fs::path getManifestPath(const fs::path &repo, int version)
 {
 	fs::path root_path = repo;
@@ -14,6 +12,7 @@ fs::path getManifestPath(const fs::path &repo, int version)
 	return manifest_path;
 }
 
+//returns a vector of paths of all the manifest files inside a given repo.
 std::vector<std::string> getManifestsFromPath(const fs::path &repo)
 {
 	fs::path root_path = repo;
@@ -30,6 +29,7 @@ std::vector<std::string> getManifestsFromPath(const fs::path &repo)
 	return result;
 }
 
+//gets the the most recent manifest path for a given repo.
 int getMostRecentManifest(const fs::path &repo)
 {
 	//get all the current manifests
@@ -48,21 +48,6 @@ int getMostRecentManifest(const fs::path &repo)
 	}
 
 	return largest;
-}
-
-fs::path findManifestByName(const fs::path &repo, const std::string &manifest_name)
-{
-	std::vector<std::string> manifests = getManifestsFromPath(repo);
-
-	for (auto &&file_name : manifests)
-	{
-		file_name += ".txt";
-		if (file_name == manifest_name)
-		{
-			return repo / (file_name);
-		}
-	}
-	return "";
 }
 
 fs::path findManifestByLabel(const fs::path &repo, const std::string &label)
