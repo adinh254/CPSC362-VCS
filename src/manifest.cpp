@@ -157,7 +157,6 @@ void writeLabel(const std::string &dst, const std::string &label)
 	fs::rename("temp.txt", dst);
 }
 
-
 void backtrackManifest(const std::string manifest, std::vector<std::string> &list)
 {
 	fs::path manifest_path = manifest;
@@ -270,27 +269,27 @@ std::string getMostRecentCommonAncestor(const std::string manifestPath1, const s
 
 	// Reverse iterate through both vectors
 	typedef std::vector<std::string>::reverse_iterator rIter;
-	for( rIter it1 = manifest1_manifest_list.rbegin(), it2 = manifest2_manifest_list.rbegin(), 
-		 end1 = manifest1_manifest_list.rend(), end2 = manifest2_manifest_list.rend(); 
-		 it1 != end1 || it2 != end2; ++it1, ++it2 )
+	for (rIter it1 = manifest1_manifest_list.rbegin(), it2 = manifest2_manifest_list.rbegin(),
+			   end1 = manifest1_manifest_list.rend(), end2 = manifest2_manifest_list.rend();
+		 it1 != end1 || it2 != end2; ++it1, ++it2)
 	{
 		std::string common_ancestor;
-		if( it1 == end1 || it2 == end2)
+		if (it1 == end1 || it2 == end2)
 		{
 			// Check if one iterator has reached end.
-			if( manifest1_manifest_list.size() > manifest2_manifest_list.size() )
+			if (manifest1_manifest_list.size() > manifest2_manifest_list.size())
 			{
-				common_ancestor = *( it1 - 1 );
+				common_ancestor = *(it1 - 1);
 			}
 			else
 			{
-				common_ancestor = *( it2 - 1 );
+				common_ancestor = *(it2 - 1);
 			}
 			return common_ancestor;
 		}
-		else if( *it1 != *it2 )
+		else if (*it1 != *it2)
 		{
-			common_ancestor = *( it1 - 1 );
+			common_ancestor = *(it1 - 1);
 			return common_ancestor;
 		}
 	}

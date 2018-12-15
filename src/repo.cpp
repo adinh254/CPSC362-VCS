@@ -1,4 +1,4 @@
- #include "repo.h"
+#include "repo.h"
 #include "artifact.h"
 #include "manifest.h"
 
@@ -116,21 +116,24 @@ void checkout(const std::string &src, const std::string &dst, const std::string 
 		std::string manifest_name = fs::path(manifest_info).filename().string();
 
 		std::string ext = ".txt";
-		if (manifest_info.rfind(ext) == std::string::npos) {
+		if (manifest_info.rfind(ext) == std::string::npos)
+		{
 			manifest_name += ext;
 		}
 		fs::path srcPath = src;
 		fs::path manifest_path;
 		std::vector<std::string> manifests = getManifestsFromPath(srcPath);
-		for (auto &&file_name : manifests) {
+		for (auto &&file_name : manifests)
+		{
 			file_name += ".txt";
-			if (file_name == manifest_name) {
+			if (file_name == manifest_name)
+			{
 				manifest_path = srcPath / file_name;
 				break;
 			}
 		}
 
-		std::cout << "manifestPath: " << manifest_path;
+		//std::cout << "manifestPath: " << manifest_path;
 		if (manifest_path.empty())
 		{
 			std::cerr << "Manifest file does not exist!" << '\n';
@@ -292,7 +295,6 @@ void merge(const std::string &repo, const std::string &target, const std::string
 
 //utility function for merge function
 
-
 void continueMerge(const std::string &repo, const std::string &target, const std::string manifestFileName)
 {
 	std::cout << "\ncontinueMerge: " << repo << ", " << target << ", " << manifestFileName << '\n';
@@ -382,8 +384,10 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 		if (foundInTarget)
 		{
 			if (repo_artifact_name != target_artifact_name)
-			{   //file versions are different (conflict)
-				std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
+			{ //file versions are different (conflict)
+				std::cout << "\nCONFLICT: \n"
+						  << "\trepo_file_path: " << repo_file_path << '\n'
+						  << "\ttarget_artifact_name: " << target_file_path << '\n';
 
 				fs::path ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
 				//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
@@ -395,35 +399,35 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 				std::string target_file_relative = target_file_path.string();
 				std::string repo_file_relative = repo_file_path.string();
 				std::string mt_path = root_target_path + removeExtension(target_file_relative) + "_MT.txt";
-				std::string mr_path = root_target_path + removeExtension( repo_file_relative ) + "_MR.txt";
+				std::string mr_path = root_target_path + removeExtension(repo_file_relative) + "_MR.txt";
 
-				fs::rename( root_target_path + target_file_relative, mt_path );
+				fs::rename(root_target_path + target_file_relative, mt_path);
 
-				fs::copy( root_repo_path + repo_file_relative, target_path );
-				fs::rename( target_path + repo_artifact_name, mr_path );
+				fs::copy(root_repo_path + repo_file_relative, target_path);
+				fs::rename(target_path + repo_artifact_name, mr_path);
 
-				std::ifstream ancestorManifest( ancestorManifestPath );
+				std::ifstream ancestorManifest(ancestorManifestPath);
 				std::string line;
 				std::string original_repo_path;
-				while( std::getline( ancestorManifest, line ) )
+				while (std::getline(ancestorManifest, line))
 				{
-					if( line.find( "Check Out" ) != std::string::npos)
+					if (line.find("Check Out") != std::string::npos)
 					{
-						size_t mid_point = line.find( ':', 23 );
-						original_repo_path = line.substr( 21, mid_point - 22 );
+						size_t mid_point = line.find(':', 23);
+						original_repo_path = line.substr(21, mid_point - 22);
 					}
-					else if( original_repo_path.empty() )
+					else if (original_repo_path.empty())
 					{
 						original_repo_path = ancestorManifestPath.parent_path().string();
 					}
 
-					if( line.find( repo_artifact_path ) != std::string::npos )
+					if (line.find(repo_artifact_path) != std::string::npos)
 					{
 						fs::path ancestor_file_path = line;
 						std::string ancestor_file_name = ancestor_file_path.filename().string();
-						std::string mg_path = root_target_path + removeExtension( line ) + "_MG.txt";
-						fs::copy( original_repo_path + "\\" + line, target_path );
-						fs::rename( target_path + ancestor_file_name, mg_path );
+						std::string mg_path = root_target_path + removeExtension(line) + "_MG.txt";
+						fs::copy(original_repo_path + "\\" + line, target_path);
+						fs::rename(target_path + ancestor_file_name, mg_path);
 					}
 				}
 			}
@@ -434,13 +438,15 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 }
 
 // Helper
-std::string removeExtension(const std::string &file_name )
+std::string removeExtension(const std::string &file_name)
 {
 	std::string ext = ".txt";
-	size_t pos = file_name.rfind( ext );
+	size_t pos = file_name.rfind(ext);
 
-	if( pos == std::string::npos ) return file_name;
-	if( pos == 0 ) return file_name;
+	if (pos == std::string::npos)
+		return file_name;
+	if (pos == 0)
+		return file_name;
 
-	return file_name.substr( 0, pos );
+	return file_name.substr(0, pos);
 }

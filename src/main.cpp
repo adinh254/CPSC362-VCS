@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-	if (argc < 4)
+	if (argc < 3)
 	{
 		std::cout << "You must specified a command and at least two arguments." << std::endl;
 	}
