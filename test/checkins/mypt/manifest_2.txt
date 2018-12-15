@@ -1,6 +1,6 @@
 Check In Arguments: K:\development\cpp\CPSC362-VCS\test\checkouts\mypt\ : K:\development\cpp\CPSC362-VCS\test\checkins\mypt\
 Create Repo Arguments: K:\development\cpp\CPSC362-VCS\test\checkouts\mypt\ K:\development\cpp\CPSC362-VCS\test\checkins\mypt\
-Time of Command: 20:15:56 December 14, 2018
+Time of Command: 20:33:00 December 14, 2018
 Source Files:
 hx.txt\72-L1.txt
 test.txt\772-L4.txt

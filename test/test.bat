@@ -19,11 +19,13 @@ del "%~dp0repos\mypt5\*.*?"
 REM change bin\main.exe with your executable file
 bin\main.exe create %~dp0mypt\ %~dp0repos\mypt\
 bin\main.exe check-out %~dp0repos\mypt\ %~dp0checkouts\mypt\ manifest_1.txt
+bin\main.exe check-out %~dp0repos\mypt\ %~dp0mypt\ manifest_1.txt
 bin\main.exe check-in %~dp0checkouts\mypt\ %~dp0checkins\mypt\ manifest_1.txt
 
 @echo off
 @echo VCS>>%~dp0checkouts\mypt\test.txt
 
 bin\main.exe check-in %~dp0checkouts\mypt\ %~dp0checkins\mypt\ manifest_1.txt
+bin\main.exe check-out %~dp0checkins\mypt\ %~dp0checkouts\mypt\ manifest_2.txt
 
-bin\main.exe merge %~dp0checkins\mypt\ %~dp0mypt\ manifest_2.txt
+bin\main.exe merge %~dp0checkins\mypt\manifest_2.txt %~dp0mypt\
