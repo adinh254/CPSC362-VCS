@@ -10,12 +10,14 @@ void createVersion(const std::string &root, const std::string &dst, int version,
 int getLatestVersion(const std::string &src);
 
 void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest,
-                      const std::string &label);
+                      const std::string &label = "");
 
 void checkout(const std::string &src, const std::string &dst, const std::string &manifest_info);
 void checkin(const std::string &src, const std::string &dst);
 
-void merge(const std::string &repo, const std::string &target, const std::string label);
+void merge(const std::string &repo, const std::string &target, const std::string label = "");
 void continueMerge(const std::string &repo, const std::string &target, const std::string repoVersion);
 
+// Helper Function
+std::string removeExtension(const std::string &file_name );
 #endif

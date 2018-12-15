@@ -154,7 +154,7 @@ void checkout(const std::string &src, const std::string &dst, const std::string 
 	}
 }
 
-void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label = "")
+void continueCheckout(const std::string &src, const std::string &dst, const std::string &manifest, const std::string &label)
 {
 	fs::path test = "test";
 	test /= "test";
@@ -260,7 +260,7 @@ void checkin(const std::string &src, const std::string &dst)
 // OR if label arg is being used to indicate repo version, repo is path to the repo's root folder
 // and label is the label to select version
 // target is path to target's root folder
-void merge(const std::string &repo, const std::string &target, const std::string label = "")
+void merge(const std::string &repo, const std::string &target, const std::string label)
 {
 	if (label == "")
 	{
@@ -383,18 +383,64 @@ void continueMerge(const std::string &repo, const std::string &target, const std
 		{
 			if (repo_artifact_name != target_artifact_name)
 			{   //file versions are different (conflict)
-				//std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
+				std::cout << "\nCONFLICT: \n" << "\trepo_file_path: " << repo_file_path << '\n' << "\ttarget_artifact_name: " << target_file_path << '\n';
 
-				//std::string ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
+				fs::path ancestorManifestPath = getMostRecentCommonAncestor(repoManifestPath, targetManifestPath);
 				//TODO: copy the artifact version of the {{repo_artifact_path}} file specified by ancestorManifestPath
 				//TODO: add _MR, _MT, and _MG versions to conflicted target file
+				std::string root_target_path = target + "\\";
+				std::string root_repo_path = repo;
+
+				std::string target_path = root_target_path + target_artifact_path + "\\";
+				std::string target_file_relative = target_file_path.string();
+				std::string repo_file_relative = repo_file_path.string();
+				std::string mt_path = root_target_path + removeExtension(target_file_relative) + "_MT.txt";
+				std::string mr_path = root_target_path + removeExtension( repo_file_relative ) + "_MR.txt";
+
+				fs::rename( root_target_path + target_file_relative, mt_path );
+
+				fs::copy( root_repo_path + repo_file_relative, target_path );
+				fs::rename( target_path + repo_artifact_name, mr_path );
+
+				std::ifstream ancestorManifest( ancestorManifestPath );
+				std::string line;
+				std::string original_repo_path;
+				while( std::getline( ancestorManifest, line ) )
+				{
+					if( line.find( "Check Out" ) != std::string::npos)
+					{
+						size_t mid_point = line.find( ':', 23 );
+						original_repo_path = line.substr( 21, mid_point - 22 );
+					}
+					else if( original_repo_path.empty() )
+					{
+						original_repo_path = ancestorManifestPath.parent_path().string();
+					}
+
+					if( line.find( repo_artifact_path ) != std::string::npos )
+					{
+						fs::path ancestor_file_path = line;
+						std::string ancestor_file_name = ancestor_file_path.filename().string();
+						std::string mg_path = root_target_path + removeExtension( line ) + "_MG.txt";
+						fs::copy( original_repo_path + "\\" + line, target_path );
+						fs::rename( target_path + ancestor_file_name, mg_path );
+					}
+				}
 			}
 		}
-		else
-		{
-			//TODO: add repo_file_path to target
-		}
 	}
-
+	//TODO: add repo_file_path to target.
 	//TODO: create new manifest in target
+}
+
+// Helper
+std::string removeExtension(const std::string &file_name )
+{
+	std::string ext = ".txt";
+	size_t pos = file_name.rfind( ext );
+
+	if( pos == std::string::npos ) return file_name;
+	if( pos == 0 ) return file_name;
+
+	return file_name.substr( 0, pos );
 }
