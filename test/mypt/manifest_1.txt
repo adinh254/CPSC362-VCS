@@ -1,5 +1,5 @@
 Check Out Arguments: K:\development\cpp\CPSC362-VCS\test\repos\mypt\ : K:\development\cpp\CPSC362-VCS\test\mypt\
 Create Repo Arguments: K:\development\cpp\CPSC362-VCS\test\mypt\ K:\development\cpp\CPSC362-VCS\test\repos\mypt\
-Time of Command: 20:33:00 December 14, 2018
+Time of Command: 20:40:21 December 14, 2018
 Source Files:
 hx.txt\72-L1.txt

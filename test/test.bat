@@ -28,4 +28,4 @@ bin\main.exe check-in %~dp0checkouts\mypt\ %~dp0checkins\mypt\ manifest_1.txt
 bin\main.exe check-in %~dp0checkouts\mypt\ %~dp0checkins\mypt\ manifest_1.txt
 bin\main.exe check-out %~dp0checkins\mypt\ %~dp0checkouts\mypt\ manifest_2.txt
 
-bin\main.exe merge %~dp0checkins\mypt\manifest_2.txt %~dp0mypt\
+bin\main.exe merge %~dp0checkouts\mypt\manifest_2.txt %~dp0checkins\mypt
