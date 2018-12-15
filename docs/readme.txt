@@ -8,7 +8,7 @@ Class number: CPSC362-01/02 12846/12847
 Project number: 2
 Project name: Version control system
 Team name: KGA
-Team members: Kedyn Macedonio, Gabriel Martinez, Andrew Dinh
+Team members: Kedyn Macedonio, Gabriel Martinez, Andrew Dinh, Tien Phan
 
 
 Intro:
